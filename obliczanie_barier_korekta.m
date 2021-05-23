@@ -1,15 +1,15 @@
 
-% korekta nastaw pomp w barierach - algorytm korekcji, 
+% correction of pump settings in barriers - correction algorithm,  
 disp('uruchomienie algorytmu korekcji wyboru pomp do uruchomienia')
 
 while warunek_wyjscia_korekta
     if Q_B_obliczone_ujecia<Q_B_zakladane_ujecia-Q_B_zakladane_ujecia*Q_B_dokladnosc_e_U*0.01
-        %korekta gdy wydajnosc uzyskana jest mniejsza od wydajnosci zak³adanej
+        % correction when the efficiency obtained is lower than the assumed capacity 
         for bariera=1:length(numery_barier)
-            %wskazanie pomp w gotowoœci a nie za³¹czonych dla kazdej bariery
+          % indication of pumps on standby and not on for each barrier 
             numerypomp=find(p_2S{bariera}(:,1)==0);
             if numel(numerypomp)>0
-                %odcyztanie dla kazdej znalezionej pompy czasu pracy
+               % reading for each running time pump found 
                 czas_pracy_barier{1,bariera}=zeros(numel(numerypomp),2); 
                 for element = 1:numel(numerypomp)
                     pompa=numerypomp(element);
@@ -19,18 +19,18 @@ while warunek_wyjscia_korekta
                 end 
             end
         end
-         %wskazanie pompy z najmniejszym czasem pracy jej numeru oraz z ktorej bariery,  
+         % indication of the pump with the lowest operating time of its number and from which barrier,  
             czas_pracy_barier_razem=[ czas_pracy_barier{1,1};czas_pracy_barier{1,2};czas_pracy_barier{1,3};czas_pracy_barier{1,4};czas_pracy_barier{1,5};czas_pracy_barier{1,6}]
             [czas_pracy_min,I] = min(czas_pracy_barier_razem(:,2))
-            pompa_do_zalaczenia= czas_pracy_barier_razem(I,1); % numer pompy do za³aczania
-            bariera = czas_pracy_barier_razem(I,3);% numer barier pompy
+            pompa_do_zalaczenia= czas_pracy_barier_razem(I,1); % pump number to be switched on 
+            bariera = czas_pracy_barier_razem(I,3);% pump barriers number 
 
         run('obliczanie_barier_zalaczanie_pompy.m');
 
         Q_B_zakladane_ujecia=sum(cell2mat(Q_B_zakladane));
         Q_B_obliczone_ujecia=sum(cell2mat(Q_B_obliczone));
 
-        % sprawdzanie warunku wyjscia
+        % checking exit condition 
         if Q_B_obliczone_ujecia<Q_B_zakladane_ujecia-Q_B_zakladane_ujecia*Q_B_dokladnosc_e_U*0.01
             warunek_wyjscia_korekta=true;
         else 
@@ -42,15 +42,13 @@ while warunek_wyjscia_korekta
 
     else
         if Q_B_obliczone_ujecia>Q_B_zakladane_ujecia+Q_B_zakladane_ujecia*Q_B_dokladnosc_e_U*0.01
-        %koretka, gdy wydajnosc uzyskana jest wieksza od wydajnosci zak³adanej  
+        % correction, when the efficiency obtained is higher than the assumed capacity 
             for bariera=1:length(numery_barier)
-                %wskazanie pomp wskazanych do za³¹czenia 
-                %TRZEBA TEZ UWZGLÊDNIÆ PRIORYETET WYSOKIEGO STANU, NIE
-                %MOZNA TAKIEJ POMPY WYLACZYC
+                % selection of pumps indicated for turn on - TAKING INTO ACCOUNT HIGH WATER TABLE IN WELL PRIORITY, SUCH PUMP CANNOT BE TURNED OFF 
                 numerypomp_wlaczone=find(p_S{bariera}(:,1)==1);
                 numerypomp_not_priorytet1=find(p_1S{bariera}(:,1)==0);
                 numerypomp=intersect(numerypomp_wlaczone,numerypomp_not_priorytet1);
-                %odcyztanie dla kazdej znalezionej pompy czasu pracy
+                % reading for each running time pump found
                 czas_pracy_barier{1,bariera}=zeros(numel(numerypomp),2); 
                 for element = 1:numel(numerypomp)
                     pompa=numerypomp(element);
@@ -59,18 +57,18 @@ while warunek_wyjscia_korekta
                     czas_pracy_barier{1,bariera}(element,3)= bariera;
                 end
             end
-            %wskazanie pompy z najwiêkszym czasem pracy , jej numeru oraz z ktorej bariery,  
+            % indication of the pump with the highest operating time, its number and from which barrier,  
             czas_pracy_barier_razem=[ czas_pracy_barier{1,1};czas_pracy_barier{1,2};czas_pracy_barier{1,3};czas_pracy_barier{1,4};czas_pracy_barier{1,5};czas_pracy_barier{1,6}];
             [czas_pracy_max,I] = max(czas_pracy_barier_razem(:,2))
-            pompa_do_wylaczenia= czas_pracy_barier_razem(I,1); % numer pompy do za³aczania
-            bariera = czas_pracy_barier_razem(I,3);% numer barier pompy
+            pompa_do_wylaczenia= czas_pracy_barier_razem(I,1); % pump number to be switched on 
+            bariera = czas_pracy_barier_razem(I,3);% pump/wells barrier number 
 
             run('obliczanie_barier_wylaczanie_pompy.m');
 
             Q_B_zakladane_ujecia=sum(cell2mat(Q_B_zakladane));
             Q_B_obliczone_ujecia=sum(cell2mat(Q_B_obliczone));
 
-            % sprawdzanie warunku wyjscia
+            % checking exit condition 
             if Q_B_obliczone_ujecia>Q_B_zakladane_ujecia+Q_B_zakladane_ujecia*Q_B_dokladnosc_e_U*0.01
                 warunek_wyjscia_korekta=true;
             else 
@@ -80,7 +78,7 @@ while warunek_wyjscia_korekta
                 Q_B_zakladane_ujecia
             end
         else 
-            %wydajnosc uzyskana znajduje sie w przedziale wydajnosci zak³adanej 
+            % efficiency obtained is within the range of the assumed efficiency 
 
         end
     end

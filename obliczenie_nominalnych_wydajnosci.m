@@ -1,4 +1,4 @@
-%%obliczenie nominalnych wydajnosci w bie¿acej sytuacji eksploatacyjnej 
+%% calculation of the nominal capacities in the current operating situation 
 Q_B_nominalne{bariera}=0;
 Q_B_braku_gotowosci{bariera}=0;
 for each=1:numel(p_0S{bariera})

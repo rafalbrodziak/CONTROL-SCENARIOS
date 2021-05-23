@@ -21,8 +21,8 @@ Project was created with:
 - `NETWORKS\`  - network model description in INP EPANET format.
 - `RESULTS\` - matlabs results temp path
 - `epanet.m`  - EPANET-Matlab Class
-- `obliczanie_barier.m`  -  START script - the main file of algorithm of scenarios synthesis 
-- `obliczanie_barier_korekta.m`  -  algorytm script of Fine tuning of the vector Si
+- `obliczanie_barier.m`  -  START script - the main file of algorithm for scenarios synthesis 
+- `obliczanie_barier_korekta.m`  -  algorytm script of finetuning of the vector Si (correction algorithm)
 - `obliczanie_barier_zalaczanie_pompy.m`  -   script for confirming selection of the pump.
 - `obliczanie_naModelu.m`  - simulation script of the created hydraulic scenario
 - `obliczanie_wydajnosci_bariery_obliczonej.m`  - calculation and update performance barriers  
